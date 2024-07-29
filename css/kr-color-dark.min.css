@@ -57,15 +57,29 @@ h2.title-h2 {
   border-left: 6px solid rgb(202, 241, 248);
 }
 
-strong {
+mark strong {
   background-color: rgb(3, 43, 89);
   color: rgb(178, 193, 206);
 }
 
-em {
+mark em {
   font-style: normal;
   background-color: rgb(8, 28, 21);
   color: rgb(172, 207, 188);
+}
+
+em {
+  font-style: normal;
+  color: rgb(251, 133, 0);
+}
+
+strong {
+  color: rgb(55, 125, 255);
+  /* background-color: rgb(198, 227, 255); */
+}
+
+mark {
+  background: linear-gradient(45deg, rgb(186, 206, 253), rgb(200, 182, 255), rgb(255, 214, 255));
 }
 
 

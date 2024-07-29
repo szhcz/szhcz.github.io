@@ -387,17 +387,26 @@ h6 {
 
 em {
   font-style: normal;
-  color: rgb(8, 28, 21);
-  background-color: rgb(205, 243, 207);
+  color: rgb(255, 136, 0);
 }
 
 strong {
-  color: rgb(3, 43, 89);
-  background-color: rgb(198, 227, 255);
+  color: rgb(30, 58, 202);
+  /* background-color: rgb(198, 227, 255); */
 }
 
 mark {
   background: linear-gradient(45deg, rgb(186, 206, 253), rgb(200, 182, 255), rgb(255, 214, 255));
+}
+
+mark strong {
+  color: rgb(0, 50, 106) !important;
+  background-color: rgb(198, 227, 255);
+}
+
+mark em {
+  color: rgb(8, 28, 21) !important;
+  background-color: rgb(205, 243, 207);
 }
 
 hr {
