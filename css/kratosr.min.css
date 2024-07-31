@@ -352,31 +352,31 @@ h6 {
   font-size: .67em;
 }
 
-.kratos-post-content h1 {
-  border-left: 10px solid rgb(3, 4, 95);
+div[itemprop='articleBody'] h1 {
+  border-left: 8px solid #54b4ed;
 }
 
-.kratos-post-content h2 {
-  border-left: 10px solid rgb(1, 63, 138);
+div[itemprop='articleBody'] h2 {
+  border-left: 8px solid #00cbef;
 }
 
-.kratos-post-content h3 {
-  border-left: 8px solid rgb(0, 120, 182);
+div[itemprop='articleBody'] h3 {
+  border-left: 6px solid #00dfdb;
 }
 
-.kratos-post-content h4 {
-  border-left: 8px solid rgb(3, 150, 199);
+div[itemprop='articleBody'] h4 {
+  border-left: 6px solid #56eeb7;
 }
 
-.kratos-post-content h5 {
-  border-left: 6px solid rgb(0, 180, 217);
+div[itemprop='articleBody'] h5 {
+  border-left: 4px solid #aaf78e;
 }
 
-.kratos-post-content h6 {
-  border-left: 6px solid rgb(72, 202, 229);
+div[itemprop='articleBody'] h6 {
+  border-left: 4px solid #f9f871;
 }
 
-.kratos-post-content h1,
+div[itemprop='articleBody'] h1,
 h2,
 h3,
 h4,
@@ -419,6 +419,7 @@ hr {
 img {
   vertical-align: middle
 }
+
 
 code,
 kbd {

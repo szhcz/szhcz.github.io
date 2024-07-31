@@ -33,7 +33,7 @@ h2.title-h2 {
   background-color: rgba(60, 73, 91, .733)
 }
 
-.kratos-post-content h1 {
+/* .kratos-post-content h1 {
   border-left: 10px solid rgb(0, 180, 215);
 }
 
@@ -55,7 +55,7 @@ h2.title-h2 {
 
 .kratos-post-content h6 {
   border-left: 6px solid rgb(202, 241, 248);
-}
+} */
 
 mark strong {
   background-color: rgb(3, 43, 89);
