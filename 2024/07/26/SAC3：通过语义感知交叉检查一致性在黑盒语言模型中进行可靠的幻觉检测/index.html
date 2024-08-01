@@ -24,7 +24,7 @@
 <meta property="og:site_name" content="szh&#39;s Blog">
 <meta property="og:description" content="1. 研究背景、动机(Why) 1.1 研究背景 LM 经常表现出一种倾向，即产生极其自信但错误的断言，通常被称为幻觉。这种现象严重阻碍了它们在事实准确性至关重要的领域的适用性。 1.2 存在问题(动机)  不确定性的指标在有限 API 访问的商业黑盒 LM中不可获取：幻觉可以通过捕捉不确定性的指标来检测输出序列。然而，这些指标需要访问令牌级别的日志概率，而这在 ChatGPT 或">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://szhcz.github.io/2024/07/26/SAC3%EF%BC%9A%E9%80%9A%E8%BF%87%E8%AF%AD%E4%B9%89%E6%84%9F%E7%9F%A5%E4%BA%A4%E5%8F%89%E6%A3%80%E6%9F%A5%E4%B8%80%E8%87%B4%E6%80%A7%E5%9C%A8%E9%BB%91%E7%9B%92%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%8F%AF%E9%9D%A0%E7%9A%84%E5%B9%BB%E8%A7%89%E6%A3%80%E6%B5%8B/https:/sfile.chatglm.cn/testpath/aa1e8f38-136f-5e7f-8a0e-d9a21bc6f015_0.png?image_process=format,webp">
+<meta property="og:image" content="https://szhcz.github.io/2024/07/26/SAC3%EF%BC%9A%E9%80%9A%E8%BF%87%E8%AF%AD%E4%B9%89%E6%84%9F%E7%9F%A5%E4%BA%A4%E5%8F%89%E6%A3%80%E6%9F%A5%E4%B8%80%E8%87%B4%E6%80%A7%E5%9C%A8%E9%BB%91%E7%9B%92%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%8F%AF%E9%9D%A0%E7%9A%84%E5%B9%BB%E8%A7%89%E6%A3%80%E6%B5%8B/https:/raw.githubusercontent.com/szhcz/myImg/main/60dbeeb2-bdd3-58bc-9080-fe95df15893a_0.png">
 <meta property="article:published_time" content="2024-07-25T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-07-25T16:00:00.000Z">
 <meta property="article:author" content="szh">
@@ -32,7 +32,7 @@
 <meta property="article:tag" content="论文阅读">
 <meta property="article:tag" content="大模型安全">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://szhcz.github.io/2024/07/26/SAC3%EF%BC%9A%E9%80%9A%E8%BF%87%E8%AF%AD%E4%B9%89%E6%84%9F%E7%9F%A5%E4%BA%A4%E5%8F%89%E6%A3%80%E6%9F%A5%E4%B8%80%E8%87%B4%E6%80%A7%E5%9C%A8%E9%BB%91%E7%9B%92%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%8F%AF%E9%9D%A0%E7%9A%84%E5%B9%BB%E8%A7%89%E6%A3%80%E6%B5%8B/https:/sfile.chatglm.cn/testpath/aa1e8f38-136f-5e7f-8a0e-d9a21bc6f015_0.png?image_process=format,webp">
+<meta name="twitter:image" content="https://szhcz.github.io/2024/07/26/SAC3%EF%BC%9A%E9%80%9A%E8%BF%87%E8%AF%AD%E4%B9%89%E6%84%9F%E7%9F%A5%E4%BA%A4%E5%8F%89%E6%A3%80%E6%9F%A5%E4%B8%80%E8%87%B4%E6%80%A7%E5%9C%A8%E9%BB%91%E7%9B%92%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%8F%AF%E9%9D%A0%E7%9A%84%E5%B9%BB%E8%A7%89%E6%A3%80%E6%B5%8B/https:/raw.githubusercontent.com/szhcz/myImg/main/60dbeeb2-bdd3-58bc-9080-fe95df15893a_0.png">
   
   <!-- 站点验证相关 -->
   
