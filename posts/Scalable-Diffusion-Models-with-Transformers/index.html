@@ -15,7 +15,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="Diffusion Model, 论文阅读" />
+    <meta name="keywords" content="Diffusion Model, 图像生成, 论文阅读" />
   
   <meta name="description" content="1. 研究背景、动机、主要贡献 传统的扩散模型大多采用U-Net作为主干网络，LDM (High-Resolution Image Synthesis with Latent Diffusion Models) 也只是通过交叉注意力机制增强其底层 UNet 主干网 ，而本文提出的DiT模型替代了U-Net，是使用Transformer来操作图像的潜在表示。 2. 论文提出的新方法 Pr">
 <meta property="og:type" content="article">
@@ -30,6 +30,7 @@
 <meta property="article:author" content="szh">
 <meta property="article:tag" content="论文阅读">
 <meta property="article:tag" content="Diffusion Model">
+<meta property="article:tag" content="图像生成">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://szhcz.github.io/posts/Scalable-Diffusion-Models-with-Transformers/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20240921202735201.png">
   
@@ -540,7 +541,7 @@ Image Synthesis with Latent Diffusion Models)
                                 <div class="footer-tag clearfix">
                                     <div class="pull-left">
                                         <i class="fa fa-tags"></i>
-                                        <a class="tag-none-link" href="/tags/Diffusion-Model/" rel="tag">Diffusion Model</a>, <a class="tag-none-link" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" rel="tag">论文阅读</a>
+                                        <a class="tag-none-link" href="/tags/Diffusion-Model/" rel="tag">Diffusion Model</a>, <a class="tag-none-link" href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" rel="tag">图像生成</a>, <a class="tag-none-link" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" rel="tag">论文阅读</a>
                                     </div>
                                     <div class="pull-date">
                                         <time datetime="2024-09-20T16:00:00.000Z" itemprop="dateModified">最后编辑：2024-09-21</time>
@@ -596,7 +597,7 @@ Image Synthesis with Latent Diffusion Models)
                 文章
             </span>
             <span class="count">
-                14
+                15
             </span>
         </a>
         <a class="meta-item" href="/categories/">
@@ -612,7 +613,7 @@ Image Synthesis with Latent Diffusion Models)
                 标签
             </span>
             <span class="count">
-                3
+                7
             </span>
         </a>
     </div>
@@ -636,7 +637,7 @@ Space</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class=
                                             
   <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
     <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/">Machine Learning</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/Computer-Vision/">Computer Vision</a><span class="category-list-count">10</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/">大模型安全</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/%E5%B9%BB%E8%A7%89/">幻觉</a><span class="category-list-count">3</span></li></ul></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/">Machine Learning</a><span class="category-list-count">11</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/Computer-Vision/">Computer Vision</a><span class="category-list-count">11</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/">大模型安全</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/%E5%B9%BB%E8%A7%89/">幻觉</a><span class="category-list-count">3</span></li></ul></li></ul>
   </aside>
 
 
@@ -645,7 +646,7 @@ Space</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class=
   <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
     <h4 class="widget-title"><i class="fa fa-tags"></i>标签合集</h4>
       <div class="tag-clouds">
-        <a href="/tags/Diffusion-Model/" style="font-size: 0.7em;">Diffusion Model</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8-%E5%B9%BB%E8%A7%89/" style="font-size: 0.6em;">大模型安全-幻觉</a> <a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.8em;">论文阅读</a>
+        <a href="/tags/Autoregressive-Model/" style="font-size: 0.6em;">Autoregressive Model</a> <a href="/tags/Diffusion-Model/" style="font-size: 0.75em;">Diffusion Model</a> <a href="/tags/Diffusion-%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" style="font-size: 0.7em;">Diffusion 可控生成</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" style="font-size: 0.75em;">图像生成</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8-%E5%B9%BB%E8%A7%89/" style="font-size: 0.65em;">大模型安全-幻觉</a> <a href="/tags/%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" style="font-size: 0.6em;">视频生成</a> <a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.8em;">论文阅读</a>
       </div>
   </aside>
 
@@ -656,6 +657,12 @@ Space</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class=
   <div class="tab-content">
       <ul class="list-group">
         
+        
+          
+          
+            <a class="list-group-item" href="/posts/Autoregressive-Model-Beats-Diffusion-Llama-for-Scalable-Image-Generation/"><i class="fa  fa-book"></i> Autoregressive Model Beats Diffusion: Llama for Scalable Image Generation</a>
+            
+          
         
           
           
@@ -682,11 +689,7 @@ Space</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class=
           
         
           
-          
-            <a class="list-group-item" href="/posts/An-Image-is-Worth-One-Word/"><i class="fa  fa-book"></i> An Image is Worth One Word: Personalizing Text-to-Image Generation using Textual Inversion</a>
             
-          
-        
           
             
           
