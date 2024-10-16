@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://raw.githubusercontent.com/szhcz/myImg/main/花海.png?token=A2GDWN4DQNTRN6BYWIAA7ZLGSNYEI">
+  
+  <title>Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model | szh&#39;s Blog</title>
+  
+  <meta name="author" content="szh" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="Autoregressive Model, Diffusion Model, Transformer, 图像生成, 论文阅读" />
+  
+  <meta name="description" content="1 研究背景、动机、主要贡献 主要贡献 Transfusion方法的提出：通过将离散文本标记的预测和连续图像的扩散过程完全整合，Transfusion能够同时处理这两种模态，无信息损失。 多模态训练框架：论文展示了如何在一个统一的模型中，利用不同的目标函数（如文本的下一词预测和图像的扩散）进行训练，从而实现对两种模态的无缝生成。 模型架构的创新：引入了特定的编码和解码层，使得模型能够高效地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model">
+<meta property="og:url" content="https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/index.html">
+<meta property="og:site_name" content="szh&#39;s Blog">
+<meta property="og:description" content="1 研究背景、动机、主要贡献 主要贡献 Transfusion方法的提出：通过将离散文本标记的预测和连续图像的扩散过程完全整合，Transfusion能够同时处理这两种模态，无信息损失。 多模态训练框架：论文展示了如何在一个统一的模型中，利用不同的目标函数（如文本的下一词预测和图像的扩散）进行训练，从而实现对两种模态的无缝生成。 模型架构的创新：引入了特定的编码和解码层，使得模型能够高效地">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20241011221709491.png">
+<meta property="article:published_time" content="2024-10-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-10-11T16:00:00.000Z">
+<meta property="article:author" content="szh">
+<meta property="article:tag" content="论文阅读">
+<meta property="article:tag" content="Diffusion Model">
+<meta property="article:tag" content="图像生成">
+<meta property="article:tag" content="Autoregressive Model">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20241011221709491.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/aplayer@1.10.1/dist/APlayer.min.css"></script>
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+<meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li>
+                                            
+                                                <a href="/">
+                                            
+                                                
+                                                    <i class="fa fa-home"></i>
+                                                
+                                                首页
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/archives/">
+                                            
+                                                
+                                                    <i class="fa fa-film"></i>
+                                                
+                                                时间轴
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/categories/">
+                                            
+                                                
+                                                    <i class="fa fa-folder-open"></i>
+                                                
+                                                分类
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/tags/">
+                                            
+                                                
+                                                    <i class="fa fa-tags"></i>
+                                                
+                                                标签
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                        <li>
+                                            
+                                                <a href="/search/">
+                                            
+                                                
+                                                    <i class="fa fa-search"></i>
+                                                
+                                                搜索
+                                            </a>
+                                            
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">szh&#39;s Blog</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>szh&#39;s Blog</h2> <br />
+                        <span>嗨 是你啊</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+        <link itemprop="mainEntityOfPage" href="https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/">
+        <div class="kratos-hentry kratos-post-inner clearfix">
+            <header class="kratos-entry-header">
+                
+                    <h1 class="kratos-entry-title text-center" itemprop="name headline">Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model</h1>
+                    
+                        
+                                <ul class="kratos-post-meta text-center">
+                                    <li><time datetime="2024-10-10T16:00:00.000Z" itemprop="datePublished"><i
+                                                class="fa fa-calendar"></i> 2024-10-11</time></li>
+                                    <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                                        <i class="fa fa-user"></i> 作者 <span itemprop="name">szh</span>
+                                    </li>
+                                    
+                                        <li>
+                                            <i class="fa fa-edit"></i>
+                                            
+                                                
+                                                            ~
+                                                                    3.24K
+                                                                        
+                                                                            字
+                                        </li>
+                                        
+                                            
+                                </ul>
+            </header>
+            <div class="kratos-post-content">
+                
+                        
+                            
+                                <div class="kratos-post-inner-toc toc-div-class" >
+                                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E5%8A%A8%E6%9C%BA%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">主要贡献</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#related-work"><span class="toc-text">Related Work</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#data-representation"><span class="toc-text">Data Representation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model-architecture"><span class="toc-text">Model Architecture</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#transfusion-attention"><span class="toc-text">Transfusion Attention</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-objective"><span class="toc-text">Training Objective</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E7%90%86"><span class="toc-text">推理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%96%B9%E6%B3%95%E7%9A%84%E7%90%86%E8%AE%BA%E5%88%86%E6%9E%90%E6%88%96%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3
+论文方法的理论分析或实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#setup"><span class="toc-text">Setup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#controlled-comparison-with-chameleon"><span class="toc-text">Controlled Comparison with
+Chameleon</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#architecture-ablations"><span class="toc-text">Architecture Ablations</span></a></li></ol></li></ol>
+                                </div>
+                                
+                                    <hr />
+                                    <div itemprop="articleBody"><h1 id="研究背景动机主要贡献">1 研究背景、动机、主要贡献</h1>
+<h2 id="主要贡献">主要贡献</h2>
+<p><strong>Transfusion方法的提出</strong>：通过将离散文本标记的预测和连续图像的扩散过程完全整合，Transfusion能够同时处理这两种模态，无信息损失。</p>
+<p><strong>多模态训练框架</strong>：论文展示了如何在一个统一的模型中，利用不同的目标函数（如文本的下一词预测和图像的扩散）进行训练，从而实现对两种模态的无缝生成。</p>
+<p><strong>模型架构的创新</strong>：引入了特定的编码和解码层，使得模型能够高效地处理和生成文本与图像，同时压缩图像到较小的表示。</p>
+<p><strong>优越的性能表现</strong>：实验表明，Transfusion在文本到图像和图像到文本生成任务中，超越了现有的方案，且在计算效率和生成质量上表现优秀。</p>
+<h2 id="related-work">Related Work</h2>
+<p>许多现有的多模态模型采用<strong>将多个模态特定的架构组合在一起</strong>的方式来处理不同的数据类型。这通常包括<strong>预训练各个模态的组件</strong>，然后将它们连接起来。例如，在图像和视频生成任务中，通常使用大型的预训练文本编码器（如Transformer架构）将输入文本表示为潜在空间中的向量，然后再通过这些表示去引导（condition）扩散模型进行生成。这类方法的特点是利用了多种<strong>现成的编码器</strong>来提升性能。</p>
+<p>许多视觉-语言模型（Vision-Language
+Models）使用<strong>预训练语言模型</strong>作为主要结构，并通过<strong>投影层</strong>与其他模态特定的编码器/解码器相连接。代表性的模型包括：</p>
+<ul>
+<li><strong>Flamingo</strong>（视觉理解）</li>
+<li><strong>LLaVA</strong>（视觉理解）</li>
+<li><strong>GILL</strong>（视觉生成模型）</li>
+<li><strong>DreamLLM</strong>（用于视觉理解和生成）</li>
+</ul>
+<p>Transfusion模型采用了一个统一的、端到端（end-to-end）的架构，可以同时处理文本和图像的理解与生成。</p>
+<p>尽管最近的研究（如Li等人和Gat等人的工作）尝试将<strong>扩散模型</strong>推广到离散文本生成上，但其在<strong>生成质量</strong>和<strong>模型规模</strong>上仍然无法与标准的自回归语言模型相媲美。</p>
+<h1 id="论文提出的新方法">2 论文提出的新方法</h1>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241011221709491.png"></p>
+<p><strong>Transfusion</strong>
+是一种训练单一统一模型以理解和生成离散和连续模态的方法。主要创新在于证明可以对不同模态使用单独的损失函数——<em>对文本使用语言建模，对图像使用扩散</em>——并在<em>共享数据和参数</em>上进行训练。</p>
+<h2 id="data-representation">Data Representation</h2>
+<ul>
+<li>离散文本
+<ul>
+<li>每个文本字符串被分词成固定词汇表中的离散标记序列，每个标记被表示为一个整数。</li>
+</ul></li>
+<li>连续图像。
+<ul>
+<li>每张图像通过 VAE 编码为 latent patches ，其中每个 patch
+被表示为一个连续向量；补丁按从左到右、从上到下的顺序排列，形成一系列补丁向量。</li>
+</ul></li>
+<li>对于混合模态示例，在每个图像序列的前后加上特殊的“图像开始”（BOI）和“图像结束”（EOI）标记，然后将其插入到文本序列中；因此，得到一个单一的序列，其中可能包含离散元素（表示文本标记的整数）和连续元素（表示图像补丁的向量）。</li>
+</ul>
+<h2 id="model-architecture">Model Architecture</h2>
+<ul>
+<li><p>大多数模型参数<em>集中在一个单一的 transformer</em> 上，该
+transformer 处理每个序列，无论其模态如何。</p></li>
+<li><p>transformer
+接受高维向量的序列作为输入，并产生类似的向量作为输出。为了将数据转换为该空间，我们使用<em>轻量级的模态特定组件</em>，且不共享参数。</p></li>
+<li><p>对于文本，这些是嵌入矩阵，将每个输入整数转换为向量空间，将每个输出向量转换为词汇表上的离散分布。</p></li>
+<li><p>对于图像，我们实验了两种压缩局部窗口（k×k补丁向量）为单个变换器向量的替代方案（反之亦然）：
+（1）简单的线性层 （2）U-Net的上下采样块。</p></li>
+</ul>
+<h2 id="transfusion-attention">Transfusion Attention</h2>
+<p>语言模型通常使用<strong>因果掩码</strong>，以便在一次前向和反向传播中有效计算整个序列的损失和梯度，而不泄漏未来标记的信息。</p>
+<p>图像并不是自然顺序的；图像中的每个部分（像素或图像块）可以在没有特定顺序的情况下相互影响。通常使用<strong>无约束（双向）注意力</strong>进行建模。</p>
+<p>Transfusion
+通过对序列中的每个元素应用因果注意力，而在每个图像的元素内应用双向注意力，结合了这两种注意力模式。
+这使得每个图像补丁可以关注同一图像内的其他补丁，但只能关注序列中先前出现的文本或其他图像的补丁。
+启用图像内部的注意力显著提升了模型性能。</p>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241011221924944.png"></p>
+<h2 id="training-objective">Training Objective</h2>
+<ul>
+<li><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="4.216ex" height="1.934ex" role="img" focusable="false" viewBox="0 -705 1863.4 855"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q48 680 182 680Q324 680 348 683H360V637H333Q273 637 258 635T233 622L232 342V129Q232 57 237 52Q243 47 313 47Q384 47 410 53Q470 70 498 110T536 221Q536 226 537 238T540 261T542 272T562 273H582V268Q580 265 568 137T554 5V0H25V46H58Q100 47 109 49T128 61V622Z"></path><path data-c="4D" d="M132 622Q125 629 121 631T105 634T62 637H29V683H135Q221 683 232 682T249 675Q250 674 354 398L458 124L562 398Q666 674 668 675Q671 681 683 682T781 683H887V637H854Q814 636 803 634T785 622V61Q791 51 802 49T854 46H887V0H876Q855 3 736 3Q605 3 596 0H585V46H618Q660 47 669 49T688 61V347Q688 424 688 461T688 546T688 613L687 632Q454 14 450 7Q446 1 430 1T410 7Q409 9 292 316L176 624V606Q175 588 175 543T175 463T175 356L176 86Q187 50 261 46H278V0H269Q254 3 154 3Q52 3 37 0H29V46H46Q78 48 98 56T122 69T132 86V622Z" transform="translate(625,0)"></path></g></g></g></g></g></g></svg></mjx-container></span>
+用于文本的预测。模型的目标是最大化文本序列中每个词的概率。损失是针对每个文本
+token 计算的。</li>
+<li><span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="6.75ex" height="1.934ex" role="img" focusable="false" viewBox="0 -705 2983.4 855"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="44" d="M130 622Q123 629 119 631T103 634T60 637H27V683H228Q399 682 419 682T461 676Q504 667 546 641T626 573T685 470T708 336Q708 210 634 116T442 3Q429 1 228 0H27V46H60Q102 47 111 49T130 61V622ZM593 338Q593 439 571 501T493 602Q439 637 355 637H322H294Q238 637 234 628Q231 624 231 344Q231 62 232 59Q233 49 248 48T339 46H350Q456 46 515 95Q561 133 577 191T593 338Z"></path><path data-c="44" d="M130 622Q123 629 119 631T103 634T60 637H27V683H228Q399 682 419 682T461 676Q504 667 546 641T626 573T685 470T708 336Q708 210 634 116T442 3Q429 1 228 0H27V46H60Q102 47 111 49T130 61V622ZM593 338Q593 439 571 501T493 602Q439 637 355 637H322H294Q238 637 234 628Q231 624 231 344Q231 62 232 59Q233 49 248 48T339 46H350Q456 46 515 95Q561 133 577 191T593 338Z" transform="translate(764,0)"></path><path data-c="50" d="M130 622Q123 629 119 631T103 634T60 637H27V683H214Q237 683 276 683T331 684Q419 684 471 671T567 616Q624 563 624 489Q624 421 573 372T451 307Q429 302 328 301H234V181Q234 62 237 58Q245 47 304 46H337V0H326Q305 3 182 3Q47 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM507 488Q507 514 506 528T500 564T483 597T450 620T397 635Q385 637 307 637H286Q237 637 234 628Q231 624 231 483V342H302H339Q390 342 423 349T481 382Q507 411 507 488Z" transform="translate(1528,0)"></path><path data-c="4D" d="M132 622Q125 629 121 631T105 634T62 637H29V683H135Q221 683 232 682T249 675Q250 674 354 398L458 124L562 398Q666 674 668 675Q671 681 683 682T781 683H887V637H854Q814 636 803 634T785 622V61Q791 51 802 49T854 46H887V0H876Q855 3 736 3Q605 3 596 0H585V46H618Q660 47 669 49T688 61V347Q688 424 688 461T688 546T688 613L687 632Q454 14 450 7Q446 1 430 1T410 7Q409 9 292 316L176 624V606Q175 588 175 543T175 463T175 356L176 86Q187 50 261 46H278V0H269Q254 3 154 3Q52 3 37 0H29V46H46Q78 48 98 56T122 69T132 86V622Z" transform="translate(2209,0)"></path></g></g></g></g></g></g></svg></mjx-container></span>
+用于图像的预测。损失是针对每个图像计算的，可能跨越序列中的多个元素（图像补丁）。</li>
+<li>生成一个被噪声污染的图像 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.357ex;" xmlns="http://www.w3.org/2000/svg" width="2.139ex" height="1.361ex" role="img" focusable="false" viewBox="0 -444 945.3 601.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(640,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g></g></g></g></g></svg></mjx-container></span>
+后。在进行图像块划分之前计算图像级别的扩散损失。</li>
+<li>损失函数 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.357ex;" xmlns="http://www.w3.org/2000/svg" width="29.696ex" height="1.952ex" role="img" focusable="false" viewBox="0 -705 13125.6 862.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="54" d="M36 443Q37 448 46 558T55 671V677H666V671Q667 666 676 556T685 443V437H645V443Q645 445 642 478T631 544T610 593Q593 614 555 625Q534 630 478 630H451H443Q417 630 414 618Q413 616 413 339V63Q420 53 439 50T528 46H558V0H545L361 3Q186 1 177 0H164V46H194Q264 46 283 49T309 63V339V550Q309 620 304 625T271 630H244H224Q154 630 119 601Q101 585 93 554T81 486T76 443V437H36V443Z"></path><path data-c="72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z" transform="translate(722,0)"></path><path data-c="61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z" transform="translate(1114,0)"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(1614,0)"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(2170,0)"></path><path data-c="66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z" transform="translate(2564,0)"></path><path data-c="75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z" transform="translate(2870,0)"></path><path data-c="73" d="M295 316Q295 356 268 385T190 414Q154 414 128 401Q98 382 98 349Q97 344 98 336T114 312T157 287Q175 282 201 278T245 269T277 256Q294 248 310 236T342 195T359 133Q359 71 321 31T198 -10H190Q138 -10 94 26L86 19L77 10Q71 4 65 -1L54 -11H46H42Q39 -11 33 -5V74V132Q33 153 35 157T45 162H54Q66 162 70 158T75 146T82 119T101 77Q136 26 198 26Q295 26 295 104Q295 133 277 151Q257 175 194 187T111 210Q75 227 54 256T33 318Q33 357 50 384T93 424T143 442T187 447H198Q238 447 268 432L283 424L292 431Q302 440 314 448H322H326Q329 448 335 442V310L329 304H301Q295 310 295 316Z" transform="translate(3426,0)"></path><path data-c="69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z" transform="translate(3820,0)"></path><path data-c="6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z" transform="translate(4098,0)"></path><path data-c="6E" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q450 438 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z" transform="translate(4598,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(4695.2,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="msub" transform="translate(5751,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="4C" d="M128 622Q121 629 117 631T101 634T58 637H25V683H36Q48 680 182 680Q324 680 348 683H360V637H333Q273 637 258 635T233 622L232 342V129Q232 57 237 52Q243 47 313 47Q384 47 410 53Q470 70 498 110T536 221Q536 226 537 238T540 261T542 272T562 273H582V268Q580 265 568 137T554 5V0H25V46H58Q100 47 109 49T128 61V622Z"></path><path data-c="4D" d="M132 622Q125 629 121 631T105 634T62 637H29V683H135Q221 683 232 682T249 675Q250 674 354 398L458 124L562 398Q666 674 668 675Q671 681 683 682T781 683H887V637H854Q814 636 803 634T785 622V61Q791 51 802 49T854 46H887V0H876Q855 3 736 3Q605 3 596 0H585V46H618Q660 47 669 49T688 61V347Q688 424 688 461T688 546T688 613L687 632Q454 14 450 7Q446 1 430 1T410 7Q409 9 292 316L176 624V606Q175 588 175 543T175 463T175 356L176 86Q187 50 261 46H278V0H269Q254 3 154 3Q52 3 37 0H29V46H46Q78 48 98 56T122 69T132 86V622Z" transform="translate(625,0)"></path></g></g></g><g data-mml-node="mo" transform="translate(7836.6,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mi" transform="translate(8836.8,0)"><path data-c="1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path></g><g data-mml-node="mo" transform="translate(9642,0)"><path data-c="22C5" d="M78 250Q78 274 95 292T138 310Q162 310 180 294T199 251Q199 226 182 208T139 190T96 207T78 250Z"></path></g><g data-mml-node="msub" transform="translate(10142.2,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mtext"><path data-c="44" d="M130 622Q123 629 119 631T103 634T60 637H27V683H228Q399 682 419 682T461 676Q504 667 546 641T626 573T685 470T708 336Q708 210 634 116T442 3Q429 1 228 0H27V46H60Q102 47 111 49T130 61V622ZM593 338Q593 439 571 501T493 602Q439 637 355 637H322H294Q238 637 234 628Q231 624 231 344Q231 62 232 59Q233 49 248 48T339 46H350Q456 46 515 95Q561 133 577 191T593 338Z"></path><path data-c="44" d="M130 622Q123 629 119 631T103 634T60 637H27V683H228Q399 682 419 682T461 676Q504 667 546 641T626 573T685 470T708 336Q708 210 634 116T442 3Q429 1 228 0H27V46H60Q102 47 111 49T130 61V622ZM593 338Q593 439 571 501T493 602Q439 637 355 637H322H294Q238 637 234 628Q231 624 231 344Q231 62 232 59Q233 49 248 48T339 46H350Q456 46 515 95Q561 133 577 191T593 338Z" transform="translate(764,0)"></path><path data-c="50" d="M130 622Q123 629 119 631T103 634T60 637H27V683H214Q237 683 276 683T331 684Q419 684 471 671T567 616Q624 563 624 489Q624 421 573 372T451 307Q429 302 328 301H234V181Q234 62 237 58Q245 47 304 46H337V0H326Q305 3 182 3Q47 3 38 0H27V46H60Q102 47 111 49T130 61V622ZM507 488Q507 514 506 528T500 564T483 597T450 620T397 635Q385 637 307 637H286Q237 637 234 628Q231 624 231 483V342H302H339Q390 342 423 349T481 382Q507 411 507 488Z" transform="translate(1528,0)"></path><path data-c="4D" d="M132 622Q125 629 121 631T105 634T62 637H29V683H135Q221 683 232 682T249 675Q250 674 354 398L458 124L562 398Q666 674 668 675Q671 681 683 682T781 683H887V637H854Q814 636 803 634T785 622V61Q791 51 802 49T854 46H887V0H876Q855 3 736 3Q605 3 596 0H585V46H618Q660 47 669 49T688 61V347Q688 424 688 461T688 546T688 613L687 632Q454 14 450 7Q446 1 430 1T410 7Q409 9 292 316L176 624V606Q175 588 175 543T175 463T175 356L176 86Q187 50 261 46H278V0H269Q254 3 154 3Q52 3 37 0H29V46H46Q78 48 98 56T122 69T132 86V622Z" transform="translate(2209,0)"></path></g></g></g></g></g></svg></mjx-container></span>
+。</li>
+<li>未来的工作可能会探讨更复杂的损失组合，例如用流匹配（flow
+matching）替代 diffusion 。</li>
+</ul>
+<h2 id="推理">推理</h2>
+<p>解码算法在两种模式之间切换：LM和扩散。</p>
+<ul>
+<li>在LM模式下，算法按照标准做法逐个从预测的分布中采样生成文本令牌（token）。当我们采样到BOI标记时，解码算法切换到扩散模式.</li>
+<li>在扩散模式下，我们遵循扩散模型的标准解码过程。具体而言，我们将纯噪声
+<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="2.687ex" height="1.344ex" role="img" focusable="false" viewBox="0 -444 1187.8 594"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(640,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path></g></g></g></g></g></svg></mjx-container></span>
+以n个图像补丁的形式附加到输入序列中，并在T个步骤中去噪。在每一步t，我们获取噪声预测，并利用它生成
+<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.471ex;" xmlns="http://www.w3.org/2000/svg" width="4.183ex" height="1.475ex" role="img" focusable="false" viewBox="0 -444 1848.9 652"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(640,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path></g><g data-mml-node="mo" transform="translate(361,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(1139,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g></g></g></g></svg></mjx-container></span> ，这将覆盖序列中的
+<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.339ex;" xmlns="http://www.w3.org/2000/svg" width="2.687ex" height="1.344ex" role="img" focusable="false" viewBox="0 -444 1187.8 594"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D431" d="M227 0Q212 3 121 3Q40 3 28 0H21V62H117L245 213L109 382H26V444H34Q49 441 143 441Q247 441 265 444H274V382H246L281 339Q315 297 316 297Q320 297 354 341L389 382H352V444H360Q375 441 466 441Q547 441 559 444H566V382H471L355 246L504 63L545 62H586V0H578Q563 3 469 3Q365 3 347 0H338V62H366Q366 63 326 112T285 163L198 63L217 62H235V0H227Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(640,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path></g></g></g></g></g></svg></mjx-container></span>
+；即模型始终依赖于噪声图像的最后时间步，并且不能关注之前的时间步。
+扩散过程结束后，我们将EOI标记附加到预测的图像上，并切换回LM模式。</li>
+</ul>
+<h1 id="论文方法的理论分析或实验评估方法与效果">3
+论文方法的理论分析或实验评估方法与效果</h1>
+<h2 id="setup">Setup</h2>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241012093949175.png"></p>
+<ul>
+<li>AdamW优化器
+<ul>
+<li>随机初始化参数：所有模型参数都被随机初始化，这是一种常见的初始化方式，有助于避免模型陷入不理想的局部最小值。</li>
+<li>它结合了Adam优化器的自适应学习率和L2正则化（权重衰减）。具体参数设置为：
+<ul>
+<li>β1 = 0.9 和 β2 =
+0.95：这两个参数控制一阶和二阶动量的指数衰减率，较高的值使得优化器能够更平滑地更新参数。</li>
+<li>ε = 1e-8：防止分母出现0值的常数。梯度的平方累积值接近 0
+时，除以这些值可能导致数值不稳定。</li>
+</ul></li>
+</ul></li>
+<li>学习率
+<ul>
+<li>学习率预热（warm-up）：初始学习率设为0.0003，在训练的最初4000步中，学习率逐渐上升。有助于防止模型在初期更新时过快收敛到次优解。</li>
+<li>余弦调度（cosine
+scheduler）：学习率在训练的后期逐渐衰减至1.5e-5。平稳降低学习率，避免过度调整模型权重。</li>
+</ul></li>
+<li>权重衰减防止过拟合</li>
+<li>梯度裁剪防止梯度爆炸</li>
+</ul>
+<h2 id="controlled-comparison-with-chameleon">Controlled Comparison with
+Chameleon</h2>
+<ul>
+<li>实验使用了模型大小（N）和token数量（D）作为对比的两个关键参数，以这两者的组合作为计算复杂度（FLOPs）的代理。</li>
+<li>尽管Transfusion和Chameleon在文本建模中使用相同的方式，Transfusion依然在文本任务上表现更好。
+<ul>
+<li>一种假设是，这源于输出分布中文本和图像标记之间的竞争</li>
+<li>或者，扩散可能在图像生成方面更有效并且需要更少的参数，从而允许
+Transfusion 模型使用比 Chameleon 更多的容量来建模文本。</li>
+</ul></li>
+</ul>
+<h2 id="architecture-ablations">Architecture Ablations</h2>
+<ul>
+<li>U-Net层带来的<strong>归纳偏置</strong>可能是其表现比简单的线性层好的原因。即便在较小的模型中加入这些归纳偏置，也能够提升模型在图像生成和描述任务上的表现。</li>
+<li>通过调整<em>扩散噪声的水平</em>，图像描述任务中的性能有所改善。</li>
+<li>Transfusion模型不仅能处理文本和图像，还能执行<strong>图像编辑</strong>任务。</li>
+</ul>
+<hr>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2408.11039">Transfusion:
+Predict the Next Token and Diffuse Images with One Multi-Modal
+Model</a></p>
+</div>
+            </div>
+            
+                <div class="kratos-copyright text-center clearfix">
+                    <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+                </div>
+                
+                    <footer class="kratos-entry-footer clearfix">
+                        
+                            <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                                
+                                        
+                                            <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                                            <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://szhcz.github.io/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/";
+            const title         = "「Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model」";
+            const excerpt       = `1 研究背景、动机、主要贡献
+主要贡献
+Transfusion方法的提出：通过将离散文本标记的预测和连续图像的扩散过程完全整合，Transfusion能够同时处理这两种模态，无信息损失。
+多模态训练框架：论文展示了如何在一个统一...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                                                
+                            </div>
+                            
+                                <div class="footer-tag clearfix">
+                                    <div class="pull-left">
+                                        <i class="fa fa-tags"></i>
+                                        <a class="tag-none-link" href="/tags/Autoregressive-Model/" rel="tag">Autoregressive Model</a>, <a class="tag-none-link" href="/tags/Diffusion-Model/" rel="tag">Diffusion Model</a>, <a class="tag-none-link" href="/tags/Transformer/" rel="tag">Transformer</a>, <a class="tag-none-link" href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" rel="tag">图像生成</a>, <a class="tag-none-link" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" rel="tag">论文阅读</a>
+                                    </div>
+                                    <div class="pull-date">
+                                        <time datetime="2024-10-11T16:00:00.000Z" itemprop="dateModified">最后编辑：2024-10-12</time>
+                                    </div>
+                                </div>
+                    </footer>
+        </div>
+        
+            <nav class="navigation post-navigation clearfix" role="navigation">
+                
+                    <div class="nav-previous clearfix">
+                        <a title=" Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction"
+                            href="/posts/Visual-Autoregressive-Modeling-Scalable-Image-Generation-via-Next-Scale-Prediction/">&lt; 上一篇</a>
+                    </div>
+                    
+                        
+                            <div class="nav-next clearfix">
+                                <a title=" Hexo 公式渲染踩坑"
+                                    href="/posts/Hexo-formula/">下一篇 &gt;</a>
+                            </div>
+                            
+            </nav>
+            
+                
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+    
+        <section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+            <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+            
+                        
+                                            <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/me.jpg" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center">szh’s Blog</p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                19
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                6
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                9
+            </span>
+        </a>
+    </div>
+</aside>
+                                                
+                                    <div class="sticky-area">
+                                        
+                            <aside id="krw-toc" class="widget widget-kratos-toc clearfix toc-div-class" >
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar" role="progressbar" aria-label="阅读进度："></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E5%8A%A8%E6%9C%BA%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">主要贡献</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#related-work"><span class="toc-text">Related Work</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#data-representation"><span class="toc-text">Data Representation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model-architecture"><span class="toc-text">Model Architecture</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#transfusion-attention"><span class="toc-text">Transfusion Attention</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-objective"><span class="toc-text">Training Objective</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E7%90%86"><span class="toc-text">推理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%96%B9%E6%B3%95%E7%9A%84%E7%90%86%E8%AE%BA%E5%88%86%E6%9E%90%E6%88%96%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3
+论文方法的理论分析或实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#setup"><span class="toc-text">Setup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#controlled-comparison-with-chameleon"><span class="toc-text">Controlled Comparison with
+Chameleon</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#architecture-ablations"><span class="toc-text">Architecture Ablations</span></a></li></ol></li></ol>
+    </div>
+</aside>
+                                
+                                            
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/">Machine Learning</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/Computer-Vision/">Computer Vision</a><span class="category-list-count">14</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/">大模型安全</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/%E5%B9%BB%E8%A7%89/">幻觉</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/">杂</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/Hexo/">Hexo</a><span class="category-list-count">1</span></li></ul></li></ul>
+  </aside>
+
+
+                                                
+                                            
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签合集</h4>
+      <div class="tag-clouds">
+        <a href="/tags/Autoregressive-Model/" style="font-size: 0.63em;">Autoregressive Model</a> <a href="/tags/Diffusion-Model/" style="font-size: 0.73em;">Diffusion Model</a> <a href="/tags/Diffusion-%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" style="font-size: 0.67em;">Diffusion 可控生成</a> <a href="/tags/Hexo/" style="font-size: 0.6em;">Hexo</a> <a href="/tags/Transformer/" style="font-size: 0.7em;">Transformer</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" style="font-size: 0.77em;">图像生成</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8-%E5%B9%BB%E8%A7%89/" style="font-size: 0.63em;">大模型安全-幻觉</a> <a href="/tags/%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" style="font-size: 0.6em;">视频生成</a> <a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.8em;">论文阅读</a>
+      </div>
+  </aside>
+
+                                                
+                                            
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/posts/Structured-Denoising-Diffusion-Models-in-Discrete-State-Spaces/"><i class="fa  fa-book"></i> Structured Denoising Diffusion Models in Discrete State-Spaces</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/posts/Hexo-formula/"><i class="fa  fa-book"></i> Hexo 公式渲染踩坑</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/"><i class="fa  fa-book"></i> Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/posts/Visual-Autoregressive-Modeling-Scalable-Image-Generation-via-Next-Scale-Prediction/"><i class="fa  fa-book"></i> Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/posts/Autoregressive-Model-Beats-Diffusion-Llama-for-Scalable-Image-Generation/"><i class="fa  fa-book"></i> Autoregressive Model Beats Diffusion: Llama for Scalable Image Generation</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+                                                
+                                    </div>
+        </section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  class="ap-lrc"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        <!-- Keep for compatibility -->
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <!-- New links -->
+                        
+                            <li>
+                                <a target="_blank" rel="nofollow" href="https://github.com/szhcz">
+                                    
+                                        <i class="fa fa-github"></i>
+                                    
+                                </a>
+                            </li>
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2024 szh's Blog 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by szh.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+    <script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+        <script>
+            if (!window.kr) {
+                window.kr = {};
+            }
+            window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+            window.kr.siteRoot = "/";
+        </script>
+        
+                
+                    <script async
+                        src="/js/candy.min.js"></script>
+                    
+
+                        
+                            <script defer src="/vendors/aplayer@1.10.1/dist/APlayer.min.js"></script>
+                                
+    <script defer src="/vendors/meting@2.0.1/dist/Meting.min.js"></script>
+    <meting-js
+        server="netease"
+        type="playlist"
+        id="2129920743"
+        order="random"
+        fixed="true"
+    >
+    </meting-js>
+
+                                    
+                                        
+                                            <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+                                                
+                                                    <script defer src="/js/kratosr.min.js"></script>
+                                                        <script defer src="/js/pjax.min.js"></script>
+                                                            
+                                                                        <!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-5FHZQSSYVW"></script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date());  gtag("config", "G-5FHZQSSYVW");</script>
+
+                                                                            <!-- Extra support for third-party plguins  -->
+                                                                            
+    </body>
+</html>
