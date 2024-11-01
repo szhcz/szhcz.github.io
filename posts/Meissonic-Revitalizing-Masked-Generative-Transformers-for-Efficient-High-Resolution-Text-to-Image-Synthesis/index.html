@@ -17,12 +17,12 @@
   
     <meta name="keywords" content="Masked Image Modeling, Transformer, 图像生成, 论文阅读" />
   
-  <meta name="description" content="1 研究背景、动机、主要贡献 1.1 存在问题(动机) 自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。 1.2 主要贡献  增强的变换器架构：结合多模态和单模态变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。 先进的位置编码与动态采样条件  使用 RoPE 以保持高分辨率图像的细节 引入动态遮">
+  <meta name="description" content="1 研究背景、动机、主要贡献1.1 存在问题(动机)自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。 1.2 主要贡献 增强的变换器架构：结合多模态和单模态变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。  先进的位置编码与动态采样条件  使用 RoPE 以保持高分辨率图像的细节 引入动态遮蔽率作为采样条件，改善">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis">
 <meta property="og:url" content="https://szhcz.github.io/posts/Meissonic-Revitalizing-Masked-Generative-Transformers-for-Efficient-High-Resolution-Text-to-Image-Synthesis/index.html">
 <meta property="og:site_name" content="szh&#39;s Blog">
-<meta property="og:description" content="1 研究背景、动机、主要贡献 1.1 存在问题(动机) 自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。 1.2 主要贡献  增强的变换器架构：结合多模态和单模态变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。 先进的位置编码与动态采样条件  使用 RoPE 以保持高分辨率图像的细节 引入动态遮">
+<meta property="og:description" content="1 研究背景、动机、主要贡献1.1 存在问题(动机)自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。 1.2 主要贡献 增强的变换器架构：结合多模态和单模态变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。  先进的位置编码与动态采样条件  使用 RoPE 以保持高分辨率图像的细节 引入动态遮蔽率作为采样条件，改善">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://szhcz.github.io/posts/Meissonic-Revitalizing-Masked-Generative-Transformers-for-Efficient-High-Resolution-Text-to-Image-Synthesis/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20241017202209010.png">
 <meta property="article:published_time" content="2024-10-17T16:00:00.000Z">
@@ -312,7 +312,7 @@ mjx-container[display="true"] + br {
                                             
                                                 
                                                             ~
-                                                                    3.18K
+                                                                    3.33K
                                                                         
                                                                             字
                                         </li>
@@ -325,70 +325,58 @@ mjx-container[display="true"] + br {
                         
                             
                                 <div class="kratos-post-inner-toc toc-div-class" >
-                                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E5%8A%A8%E6%9C%BA%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#motivation"><span class="toc-text">2.1 MOTIVATION</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model-architecture"><span class="toc-text">2.2 MODEL ARCHITECTURE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multi-modal-transformer-for-masked-image-modeling"><span class="toc-text">2.3
-MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-details"><span class="toc-text">2.4 TRAINING DETAILS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#quantative-comparison"><span class="toc-text">3.1 QUANTATIVE COMPARISON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zero-shot-image-to-image-editing"><span class="toc-text">3.2 ZERO-SHOT IMAGE-TO-IMAGE
-EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E4%BC%98%E7%82%B9"><span class="toc-text">4 论文优点</span></a></li></ol>
+                                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E3%80%81%E5%8A%A8%E6%9C%BA%E3%80%81%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-MOTIVATION"><span class="toc-text">2.1 MOTIVATION</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-MODEL-ARCHITECTURE"><span class="toc-text">2.2 MODEL ARCHITECTURE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-MULTI-MODAL-TRANSFORMER-FOR-MASKED-IMAGE-MODELING"><span class="toc-text">2.3 MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-TRAINING-DETAILS"><span class="toc-text">2.4 TRAINING DETAILS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-QUANTATIVE-COMPARISON"><span class="toc-text">3.1 QUANTATIVE COMPARISON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-ZERO-SHOT-IMAGE-TO-IMAGE-EDITING"><span class="toc-text">3.2 ZERO-SHOT IMAGE-TO-IMAGE EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%AE%BA%E6%96%87%E4%BC%98%E7%82%B9"><span class="toc-text">4 论文优点</span></a></li></ol>
                                 </div>
                                 
                                     <hr />
-                                    <div itemprop="articleBody"><h1 id="研究背景动机主要贡献">1 研究背景、动机、主要贡献</h1>
-<h2 id="存在问题动机">1.1 存在问题(动机)</h2>
-<p>自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。</p>
-<h2 id="主要贡献">1.2 主要贡献</h2>
-<ul>
-<li><p><strong>增强的变换器架构</strong>：结合<em>多模态和单模态</em>变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。</p></li>
+                                    <div itemprop="articleBody"><h1 id="1-研究背景、动机、主要贡献"><a href="#1-研究背景、动机、主要贡献" class="headerlink" title="1 研究背景、动机、主要贡献"></a>1 研究背景、动机、主要贡献</h1><h2 id="1-1-存在问题-动机"><a href="#1-1-存在问题-动机" class="headerlink" title="1.1 存在问题(动机)"></a>1.1 存在问题(动机)</h2><p>自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。</p>
+<h2 id="1-2-主要贡献"><a href="#1-2-主要贡献" class="headerlink" title="1.2 主要贡献"></a>1.2 主要贡献</h2><ul>
+<li><p><strong>增强的变换器架构</strong>：结合<em>多模态和单模态</em>变换器层，提高MIM的训练效率和性能，能够有效捕捉语言与视觉之间的交互。</p>
+</li>
 <li><p><strong>先进的位置编码与动态采样条件</strong></p>
 <ul>
 <li>使用 <em>RoPE</em> 以保持高分辨率图像的细节</li>
 <li>引入<em>动态遮蔽率</em>作为采样条件，改善图像生成的细节和整体质量。</li>
-</ul></li>
-<li><p>高质量的训练数据</p></li>
-<li><p>微条件：将原始图像分辨率、裁剪坐标和人类偏好评分作为微条件，可以大大增强高分辨率美学训练期间模型的稳定性。</p></li>
-<li><p>特征压缩层：压缩与解压缩，最终生成高分辨率图像。</p></li>
 </ul>
-<h1 id="论文提出的新方法">2 论文提出的新方法</h1>
-<h2 id="motivation">2.1 MOTIVATION</h2>
-<p>扩散模型和自回归模型的差异使得集成这两种模态变得复杂，强调了开发创新方法的必要性，以缩小它们之间的差距。</p>
-<p>非自回归的遮蔽图像建模（MIM）技术，例如MaskGIT和MUSE，展示了高效图像生成的潜力。然而，MIM面临两大关键限制：
-1. <strong>分辨率限制</strong>：当前的MIM方法最多只能生成512 ×
-512像素的图像，这限制了其广泛采用和进一步发展的可能性，尤其是随着T2I社区逐渐将1024
-× 1024像素作为标准。 2.
-<strong>性能差距</strong>：性能未能达到领先的扩散模型（如SDXL）的水平。尤其在图像质量、复杂细节和概念表达领域表现不佳。</p>
+</li>
+<li>高质量的训练数据</li>
+<li>微条件：将原始图像分辨率、裁剪坐标和人类偏好评分作为微条件，可以大大增强高分辨率美学训练期间模型的稳定性。</li>
+<li>特征压缩层：压缩与解压缩，最终生成高分辨率图像。</li>
+</ul>
+<h1 id="2-论文提出的新方法"><a href="#2-论文提出的新方法" class="headerlink" title="2 论文提出的新方法"></a>2 论文提出的新方法</h1><h2 id="2-1-MOTIVATION"><a href="#2-1-MOTIVATION" class="headerlink" title="2.1 MOTIVATION"></a>2.1 MOTIVATION</h2><p>扩散模型和自回归模型的差异使得集成这两种模态变得复杂，强调了开发创新方法的必要性，以缩小它们之间的差距。</p>
+<p>非自回归的遮蔽图像建模（MIM）技术，例如MaskGIT和MUSE，展示了高效图像生成的潜力。然而，MIM面临两大关键限制：</p>
+<ol>
+<li><strong>分辨率限制</strong>：当前的MIM方法最多只能生成512 × 512像素的图像，这限制了其广泛采用和进一步发展的可能性，尤其是随着T2I社区逐渐将1024 × 1024像素作为标准。</li>
+<li><strong>性能差距</strong>：性能未能达到领先的扩散模型（如SDXL）的水平。尤其在图像质量、复杂细节和概念表达领域表现不佳。</li>
+</ol>
 <p>本研究旨在</p>
-<ol type="1">
+<ol>
 <li>使MIM能够高效地生成高分辨率图像（如1024 × 1024）</li>
 <li>同时缩小与顶级扩散模型之间的差距，并确保适合消费级硬件的计算效率。</li>
 <li>通过Meissonic模型，目标是推动MIM方法的边界，将其带到T2I合成的前沿。</li>
 </ol>
-<h2 id="model-architecture">2.2 MODEL ARCHITECTURE</h2>
-<ul>
-<li><strong>矢量量化图像编码器和解码器</strong>：采用VQ-VAE模型，将原始图像像素转换为离散语义令牌。此模型由编码器、解码器和量化层组成，使用学习到的字典将输入图像映射为离散令牌序列。
-实现中，a downsampling ratio of f = 16 and a codebook size of 8192</li>
+<h2 id="2-2-MODEL-ARCHITECTURE"><a href="#2-2-MODEL-ARCHITECTURE" class="headerlink" title="2.2 MODEL ARCHITECTURE"></a>2.2 MODEL ARCHITECTURE</h2><ul>
+<li><strong>矢量量化图像编码器和解码器</strong>：采用VQ-VAE模型，将原始图像像素转换为离散语义令牌。此模型由编码器、解码器和量化层组成，使用学习到的字典将输入图像映射为离散令牌序列。<br>实现中，a downsampling ratio of f = 16 and a codebook size of 8192</li>
 <li><strong>灵活高效的文本编码器</strong>：与以往工作中常用的大型语言模型编码器（如T5XXL1或LLaMa）不同，我们采用<em>CLIP模型中的单个文本编码器</em>，并对其进行微调以优化T2I性能。这种设计在显著减少GPU内存和计算成本的同时，未降低视觉质量。</li>
-<li><strong>多模态Transformer骨干</strong>：
-<ul>
-<li>模型采用多模态Transformer框架，结合采样参数和旋转位置嵌入（RoPE）进行空间信息编码，并引入特征压缩层以有效处理有大量离散token的高分辨率生成。（将嵌入特征从
-64 × 64 压缩到 32 × 32，经过transformer后解压缩为 64 × 64 ）</li>
+<li><strong>多模态Transformer骨干</strong>：<ul>
+<li>模型采用多模态Transformer框架，结合采样参数和旋转位置嵌入（RoPE）进行空间信息编码，并引入特征压缩层以有效处理有大量离散token的高分辨率生成。（将嵌入特征从 64 × 64 压缩到 32 × 32，经过transformer后解压缩为 64 × 64 ）</li>
 <li>在分布式训练期间实现梯度裁剪和检查点重新加载</li>
 <li>并将 QK-Norm 层集成到架构中</li>
-</ul></li>
-<li><strong>多样的微条件</strong>：为了增强生成性能，模型加入了额外的条件，如原始图像分辨率、裁剪坐标和人类偏好评分。这些条件被转换为<strong>正弦嵌入</strong>，并作为额外的通道连接到文本编码器的最终池化隐藏状态中。</li>
-<li><strong>掩码策略</strong>
-<ul>
-<li>采用余弦调度的可变掩蔽比。与自回归模型按固定toke顺序学习条件分布不同，Meissonic通过随机掩码和可变比率来学习任意子集token的分布，这使模型具有更高的灵活性。
-<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.798ex;" xmlns="http://www.w3.org/2000/svg" width="19.21ex" height="3.003ex" role="img" focusable="false" viewBox="0 -974.6 8490.9 1327.4"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path></g><g data-mml-node="mo" transform="translate(503,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(892,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mo" transform="translate(1343,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(2009.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mfrac" transform="translate(3065.6,0)"><g data-mml-node="mn" transform="translate(244.7,394) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="mi" transform="translate(220,-345) scale(0.707)"><path data-c="1D70B" d="M132 -11Q98 -11 98 22V33L111 61Q186 219 220 334L228 358H196Q158 358 142 355T103 336Q92 329 81 318T62 297T53 285Q51 284 38 284Q19 284 19 294Q19 300 38 329T93 391T164 429Q171 431 389 431Q549 431 553 430Q573 423 573 402Q573 371 541 360Q535 358 472 358H408L405 341Q393 269 393 222Q393 170 402 129T421 65T431 37Q431 20 417 5T381 -10Q370 -10 363 -7T347 17T331 77Q330 86 330 121Q330 170 339 226T357 318T367 358H269L268 354Q268 351 249 275T206 114T175 17Q164 -11 132 -11Z"></path></g><rect width="603.1" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(3908.6,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(4297.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(5019.8,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="msup" transform="translate(6020.1,0)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="msup" transform="translate(6907.6,0)"><g data-mml-node="mo"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="TeXAtom" transform="translate(422,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mfrac" transform="translate(778,0)"><g data-mml-node="mn" transform="translate(220,394) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="553.6" height="60" x="120" y="220"></rect></g></g></g></g></g></svg></mjx-container></span></li>
-<li>这种灵活性支持了并行采样策略，并使模型能够实现多种<strong>零样本图像编辑</strong>功能。</li>
-</ul></li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241017202126957.png"></p>
-<h2 id="multi-modal-transformer-for-masked-image-modeling">2.3
-MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</h2>
-<p>为MIM的专门设计</p>
+</li>
+<li><strong>多样的微条件</strong>：为了增强生成性能，模型加入了额外的条件，如原始图像分辨率、裁剪坐标和人类偏好评分。这些条件被转换为<strong>正弦嵌入</strong>，并作为额外的通道连接到文本编码器的最终池化隐藏状态中。</li>
+<li><strong>掩码策略</strong><ul>
+<li>采用余弦调度的可变掩蔽比。与自回归模型按固定toke顺序学习条件分布不同，Meissonic通过随机掩码和可变比率来学习任意子集token的分布，这使模型具有更高的灵活性。<br> <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.798ex;" xmlns="http://www.w3.org/2000/svg" width="19.21ex" height="3.003ex" role="img" focusable="false" viewBox="0 -974.6 8490.9 1327.4"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path></g><g data-mml-node="mo" transform="translate(503,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(892,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mo" transform="translate(1343,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(2009.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mfrac" transform="translate(3065.6,0)"><g data-mml-node="mn" transform="translate(244.7,394) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="mi" transform="translate(220,-345) scale(0.707)"><path data-c="1D70B" d="M132 -11Q98 -11 98 22V33L111 61Q186 219 220 334L228 358H196Q158 358 142 355T103 336Q92 329 81 318T62 297T53 285Q51 284 38 284Q19 284 19 294Q19 300 38 329T93 391T164 429Q171 431 389 431Q549 431 553 430Q573 423 573 402Q573 371 541 360Q535 358 472 358H408L405 341Q393 269 393 222Q393 170 402 129T421 65T431 37Q431 20 417 5T381 -10Q370 -10 363 -7T347 17T331 77Q330 86 330 121Q330 170 339 226T357 318T367 358H269L268 354Q268 351 249 275T206 114T175 17Q164 -11 132 -11Z"></path></g><rect width="603.1" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(3908.6,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(4297.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(5019.8,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="msup" transform="translate(6020.1,0)"><g data-mml-node="mi"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mn" transform="translate(484,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="msup" transform="translate(6907.6,0)"><g data-mml-node="mo"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="TeXAtom" transform="translate(422,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mfrac" transform="translate(778,0)"><g data-mml-node="mn" transform="translate(220,394) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="553.6" height="60" x="120" y="220"></rect></g></g></g></g></g></svg></mjx-container> </li>
+<li>这种灵活性支持了并行采样策略，并使模型能够实现多种<strong>零样本图像编辑</strong>功能。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241017202126957.png" alt=""></p>
+<p>中间的过程是类似于扩散模型的， other conditions的加入是通过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">norm_hidden_states, gate_msa, shift_mlp, scale_mlp, gate_mlp = self.norm1(hidden_states, emb=temb)</span><br><span class="line">norm_encoder_hidden_states, c_gate_msa, c_shift_mlp, c_scale_mlp, c_gate_mlp = self.norm1_context(</span><br><span class="line">            encoder_hidden_states, emb=temb</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+<h2 id="2-3-MULTI-MODAL-TRANSFORMER-FOR-MASKED-IMAGE-MODELING"><a href="#2-3-MULTI-MODAL-TRANSFORMER-FOR-MASKED-IMAGE-MODELING" class="headerlink" title="2.3 MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING"></a>2.3 MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</h2><p>为MIM的专门设计</p>
 <ul>
-<li>Rotary Position Embeddings：RoPE在LLM中表现出色。由于使用高质量
-image tokenizer 将图像转换为离散标记，原始 1D RoPE
-已经可以取得良好的结果。这种 <em>1D RoPE</em> 有助于从 256 × 256 阶段到
-512 × 512 阶段的无缝过渡，同时增强模型的生成性能。</li>
+<li>Rotary Position Embeddings：RoPE在LLM中表现出色。由于使用高质量 image tokenizer 将图像转换为离散标记，原始 1D RoPE 已经可以取得良好的结果。这种 <em>1D RoPE</em> 有助于从 256 × 256 阶段到 512 × 512 阶段的无缝过渡，同时增强模型的生成性能。</li>
 <li>Deeper Model with Single-modal Transformer：</li>
 <li>虽然多模态变换器表现良好，但实验表明，减少多模态块并采用<em>单模态块配置</em>在训练过程中更加稳定且计算效率更高。</li>
 <li>模型的前半部分使用多模态变换器块，后半部分转为单模态变换器块，找到的最佳块比例大约为1:2。</li>
@@ -396,37 +384,26 @@ image tokenizer 将图像转换为离散标记，原始 1D RoPE
 <li>原始图像分辨率：有效地帮助模型隐式过滤掉低质量数据并学习高质量、高分辨率数据的属性。</li>
 <li>裁剪坐标：提高训练稳定性，可能是由于增强了裁剪区域与语义条件之间的一致性。</li>
 <li>人类偏好分数</li>
-<li>Feature Compression Layers：
-<ul>
+<li>Feature Compression Layers：<ul>
 <li>主张在微调阶段集成精简的特征压缩层，以促进高效的高分辨率生成的学习过程。</li>
-<li>通过在 Transformer
-的前后引入基于2D卷积的特征压缩层，模型可以在处理之前压缩特征图，之后再进行解压缩，从而有效解决效率与分辨率过渡的挑战。</li>
-</ul></li>
+<li>通过在 Transformer 的前后引入基于2D卷积的特征压缩层，模型可以在处理之前压缩特征图，之后再进行解压缩，从而有效解决效率与分辨率过渡的挑战。</li>
 </ul>
-<h2 id="training-details">2.4 TRAINING DETAILS</h2>
-<p>Meissonic使用MODEL
-ARCHITECTURE中的三个模块构建。训练过程中采用CFG和交叉熵损失，并分为三个分辨率阶段进行训练，使用公共数据集和自定义数据。</p>
+</li>
+</ul>
+<h2 id="2-4-TRAINING-DETAILS"><a href="#2-4-TRAINING-DETAILS" class="headerlink" title="2.4 TRAINING DETAILS"></a>2.4 TRAINING DETAILS</h2><p>Meissonic使用MODEL ARCHITECTURE中的三个模块构建。训练过程中采用CFG和交叉熵损失，并分为三个分辨率阶段进行训练，使用公共数据集和自定义数据。</p>
 <ul>
-<li><strong>阶段1</strong>：训练分辨率为 256×256 的模型，批量大小为
-2048，训练 10 万步。从大量数据中<em>理解基本概念</em>。</li>
-<li><strong>阶段2</strong>：训练分辨率为 512×512 的模型，批量大小为
-512，继续训练 10 万步。使用长提示<em>对齐文本和图像</em>。</li>
-<li><strong>阶段3</strong>：训练分辨率为 1024×1024 的模型，批量大小为
-256，训练 42000 步。掌握<em>特征压缩</em>以生成更高分辨率。</li>
+<li><strong>阶段1</strong>：训练分辨率为 256×256 的模型，批量大小为 2048，训练 10 万步。从大量数据中<em>理解基本概念</em>。</li>
+<li><strong>阶段2</strong>：训练分辨率为 512×512 的模型，批量大小为 512，继续训练 10 万步。使用长提示<em>对齐文本和图像</em>。</li>
+<li><strong>阶段3</strong>：训练分辨率为 1024×1024 的模型，批量大小为 256，训练 42000 步。掌握<em>特征压缩</em>以生成更高分辨率。</li>
 <li><strong>阶段4</strong>：微调模型，不冻结文本编码器，并引入人类偏好分数。完善高分辨率美学图像的生成。</li>
 </ul>
-<p>Meissonic 的训练时间约为 <strong>48 个 H100 GPU 天</strong></p>
-<h1 id="论文实验评估方法与效果">3 论文实验评估方法与效果</h1>
-<h2 id="quantative-comparison">3.1 QUANTATIVE COMPARISON</h2>
-<p>传统的图像生成评估指标（如FID和CLIP分数）<em>对于视觉美学的相关性有限</em>。因此，作者使用了更具代表性的<em>人类偏好分数v2（HPSv2）、GenEval、多维人类偏好分数（MPS）</em>等评价标准来衡量模型的表现。</p>
+<p>Meissonic 的训练时间约为 <strong>48 个 H100 GPU 天</strong> </p>
+<h1 id="3-论文实验评估方法与效果"><a href="#3-论文实验评估方法与效果" class="headerlink" title="3 论文实验评估方法与效果"></a>3 论文实验评估方法与效果</h1><h2 id="3-1-QUANTATIVE-COMPARISON"><a href="#3-1-QUANTATIVE-COMPARISON" class="headerlink" title="3.1 QUANTATIVE COMPARISON"></a>3.1 QUANTATIVE COMPARISON</h2><p>传统的图像生成评估指标（如FID和CLIP分数）<em>对于视觉美学的相关性有限</em>。因此，作者使用了更具代表性的<em>人类偏好分数v2（HPSv2）、GenEval、多维人类偏好分数（MPS）</em>等评价标准来衡量模型的表现。</p>
 <p>Meissonic经过优化后具有10亿参数，可以在8GB的显存上高效运行，使推理和微调都变得方便。</p>
-<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018112659152.png"></p>
-<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018113046917.png"></p>
-<h2 id="zero-shot-image-to-image-editing">3.2 ZERO-SHOT IMAGE-TO-IMAGE
-EDITING</h2>
-<ol type="1">
-<li><strong>图像编辑任务</strong>：使用EMU-Edit数据集，模型需要完成七类操作、
-<ol type="1">
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018112659152.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018113046917.png" alt=""></p>
+<h2 id="3-2-ZERO-SHOT-IMAGE-TO-IMAGE-EDITING"><a href="#3-2-ZERO-SHOT-IMAGE-TO-IMAGE-EDITING" class="headerlink" title="3.2 ZERO-SHOT IMAGE-TO-IMAGE EDITING"></a>3.2 ZERO-SHOT IMAGE-TO-IMAGE EDITING</h2><ol>
+<li><strong>图像编辑任务</strong>：使用EMU-Edit数据集，模型需要完成七类操作、<ol>
 <li>背景更改</li>
 <li>全面的图像修改</li>
 <li>风格更改</li>
@@ -434,29 +411,25 @@ EDITING</h2>
 <li>对象添加</li>
 <li>局部修改</li>
 <li>颜色和纹理的变化。</li>
-</ol></li>
-<li><strong>内置图像编辑</strong>
-<ol type="1">
+</ol>
+</li>
+<li><strong>内置图像编辑</strong><ol>
 <li>mask-free</li>
 <li>mask-guided</li>
-</ol></li>
-<li>Meissonic
-无需对图像编辑特定数据或指令数据集进行任何训练或微调即可实现这一性能。</li>
 </ol>
-<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018114128606.png"></p>
-<h1 id="论文优点">4 论文优点</h1>
-<p>优点：</p>
+</li>
+<li>Meissonic 无需对图像编辑特定数据或指令数据集进行任何训练或微调即可实现这一性能。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241018114128606.png" alt=""></p>
+<h1 id="4-论文优点"><a href="#4-论文优点" class="headerlink" title="4 论文优点"></a>4 论文优点</h1><p>优点：</p>
 <ul>
-<li>Meissonic
-仅有10亿参数，却在高分辨率、美观的图像生成任务中表现优异。能够在消费级的GPU上运行（如8GB的显卡）
-<ul>
+<li>Meissonic 仅有10亿参数，却在高分辨率、美观的图像生成任务中表现优异。能够在消费级的GPU上运行（如8GB的显卡）<ul>
 <li>可以应用在移动设备等有限计算资源的场景中，为用户提供离线生成图像的能力。</li>
-</ul></li>
+</ul>
+</li>
 </ul>
 <hr>
-<p>原文链接：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2410.08261">MEISSONIC:
-REVITALIZING MASKED GENERATIVE TRANSFORMERS FOR EFFICIENT
-HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2410.08261">MEISSONIC: REVITALIZING MASKED GENERATIVE TRANSFORMERS FOR EFFICIENT HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
 </div>
             </div>
             
@@ -524,12 +497,9 @@ HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
             const twitterBase   = "https://twitter.com/intent/tweet?";
             const hostUrl       = "https://szhcz.github.io/posts/Meissonic-Revitalizing-Masked-Generative-Transformers-for-Efficient-High-Resolution-Text-to-Image-Synthesis/";
             const title         = "「Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis」";
-            const excerpt       = `1 研究背景、动机、主要贡献
-1.1 存在问题(动机)
-自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。
+            const excerpt       = `1 研究背景、动机、主要贡献1.1 存在问题(动机)自回归生成由于图像令牌数量庞大，效率低下；而非自回归方法（如MIM）则在性能上有限，无法与先进的扩散模型相比。
 1.2 主要贡献
-
-增强的变换器架构：结合多模态和单模态...`;
+增强的变换器架构：结合多模态和单模态变换器层，提高M...`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -565,6 +535,11 @@ HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
                     </div>
                     
                         
+                            <div class="nav-next clearfix">
+                                <a title=" Blended Diffusion for Text-driven Editing of Natural Images"
+                                    href="/posts/Blended-Diffusion-for-Text-driven-Editing-of-Natural-Images/">下一篇 &gt;</a>
+                            </div>
+                            
             </nav>
             
                 
@@ -599,7 +574,7 @@ HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
                 文章
             </span>
             <span class="count">
-                21
+                22
             </span>
         </a>
         <a class="meta-item" href="/categories/">
@@ -615,7 +590,7 @@ HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
                 标签
             </span>
             <span class="count">
-                10
+                11
             </span>
         </a>
     </div>
@@ -631,16 +606,14 @@ HIGH-RESOLUTION TEXT-TO-IMAGE SYNTHESIS</a></p>
         <span class="toc-progress-bar" role="progressbar" aria-label="阅读进度："></span>
     </h4>
     <div class="textwidget">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E5%8A%A8%E6%9C%BA%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#motivation"><span class="toc-text">2.1 MOTIVATION</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#model-architecture"><span class="toc-text">2.2 MODEL ARCHITECTURE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#multi-modal-transformer-for-masked-image-modeling"><span class="toc-text">2.3
-MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#training-details"><span class="toc-text">2.4 TRAINING DETAILS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#quantative-comparison"><span class="toc-text">3.1 QUANTATIVE COMPARISON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zero-shot-image-to-image-editing"><span class="toc-text">3.2 ZERO-SHOT IMAGE-TO-IMAGE
-EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E4%BC%98%E7%82%B9"><span class="toc-text">4 论文优点</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E3%80%81%E5%8A%A8%E6%9C%BA%E3%80%81%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-MOTIVATION"><span class="toc-text">2.1 MOTIVATION</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-MODEL-ARCHITECTURE"><span class="toc-text">2.2 MODEL ARCHITECTURE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-MULTI-MODAL-TRANSFORMER-FOR-MASKED-IMAGE-MODELING"><span class="toc-text">2.3 MULTI-MODAL TRANSFORMER FOR MASKED IMAGE MODELING</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-TRAINING-DETAILS"><span class="toc-text">2.4 TRAINING DETAILS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-QUANTATIVE-COMPARISON"><span class="toc-text">3.1 QUANTATIVE COMPARISON</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-ZERO-SHOT-IMAGE-TO-IMAGE-EDITING"><span class="toc-text">3.2 ZERO-SHOT IMAGE-TO-IMAGE EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%AE%BA%E6%96%87%E4%BC%98%E7%82%B9"><span class="toc-text">4 论文优点</span></a></li></ol>
     </div>
 </aside>
                                 
                                             
   <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
     <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/">Machine Learning</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/Computer-Vision/">Computer Vision</a><span class="category-list-count">16</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/">大模型安全</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/%E5%B9%BB%E8%A7%89/">幻觉</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/">杂</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/Hexo/">Hexo</a><span class="category-list-count">1</span></li></ul></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/">Machine Learning</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Machine-Learning/Computer-Vision/">Computer Vision</a><span class="category-list-count">17</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/">大模型安全</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8/%E5%B9%BB%E8%A7%89/">幻觉</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/">杂</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82/Hexo/">Hexo</a><span class="category-list-count">1</span></li></ul></li></ul>
   </aside>
 
 
@@ -649,7 +622,7 @@ EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-
   <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
     <h4 class="widget-title"><i class="fa fa-tags"></i>标签合集</h4>
       <div class="tag-clouds">
-        <a href="/tags/Autoregressive-Model/" style="font-size: 0.63em;">Autoregressive Model</a> <a href="/tags/Diffusion-Model/" style="font-size: 0.73em;">Diffusion Model</a> <a href="/tags/Diffusion-%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" style="font-size: 0.67em;">Diffusion 可控生成</a> <a href="/tags/Hexo/" style="font-size: 0.6em;">Hexo</a> <a href="/tags/Masked-Image-Modeling/" style="font-size: 0.6em;">Masked Image Modeling</a> <a href="/tags/Transformer/" style="font-size: 0.7em;">Transformer</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" style="font-size: 0.77em;">图像生成</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8-%E5%B9%BB%E8%A7%89/" style="font-size: 0.63em;">大模型安全-幻觉</a> <a href="/tags/%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" style="font-size: 0.6em;">视频生成</a> <a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.8em;">论文阅读</a>
+        <a href="/tags/Autoregressive-Model/" style="font-size: 0.63em;">Autoregressive Model</a> <a href="/tags/Diffusion-Model/" style="font-size: 0.73em;">Diffusion Model</a> <a href="/tags/Diffusion-%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" style="font-size: 0.67em;">Diffusion 可控生成</a> <a href="/tags/Hexo/" style="font-size: 0.6em;">Hexo</a> <a href="/tags/Masked-Image-Modeling/" style="font-size: 0.6em;">Masked Image Modeling</a> <a href="/tags/Transformer/" style="font-size: 0.7em;">Transformer</a> <a href="/tags/inpainting/" style="font-size: 0.6em;">inpainting</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" style="font-size: 0.77em;">图像生成</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8-%E5%B9%BB%E8%A7%89/" style="font-size: 0.63em;">大模型安全-幻觉</a> <a href="/tags/%E8%A7%86%E9%A2%91%E7%94%9F%E6%88%90/" style="font-size: 0.6em;">视频生成</a> <a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.8em;">论文阅读</a>
       </div>
   </aside>
 
@@ -660,6 +633,12 @@ EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-
   <div class="tab-content">
       <ul class="list-group">
         
+        
+          
+          
+            <a class="list-group-item" href="/posts/Blended-Diffusion-for-Text-driven-Editing-of-Natural-Images/"><i class="fa  fa-book"></i> Blended Diffusion for Text-driven Editing of Natural Images</a>
+            
+          
         
           
           
@@ -686,11 +665,7 @@ EDITING</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-
           
         
           
-          
-            <a class="list-group-item" href="/posts/Transfusion-Predict-the-Next-Token-and-Diffuse-Images-with-One-Multi-Modal-Model/"><i class="fa  fa-book"></i> Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model</a>
             
-          
-        
           
             
           
