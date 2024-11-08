@@ -586,7 +586,24 @@ table td [class*=col-],
 table th [class*=col-] {
   display: table-cell
 }
-
+.dailyPaperTag{
+  /* background-image: linear-gradient( to bottom,rgb(95,95,95),rgb(78,78,78)); */
+  border-radius: 5px;
+  color:rgb(255,255,255);
+  padding: 3px 6px 3px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  margin: 3px;
+}
+.tag_2d{
+  background-image: linear-gradient(-90deg, #29bdd9 0%, #276ace 100%);
+}
+.tag_3d{
+  background-image: linear-gradient(to right, #ed4264 , #ffedbc );
+}
+.tag_vlm{
+  background-image: linear-gradient(to right, #3f51b1 0%, #5a55ae 13%, #7b5fac 25%, #8f6aae 38%, #a86aa4 50%, #cc6b8e 62%, #f18271 75%, #f3a469 87%, #f7c978 100%);
+}
 .btn {
   display: inline-block;
   font-size: 14px;
