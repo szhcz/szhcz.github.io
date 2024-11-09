@@ -590,10 +590,11 @@ table th [class*=col-] {
   /* background-image: linear-gradient( to bottom,rgb(95,95,95),rgb(78,78,78)); */
   border-radius: 5px;
   color:rgb(255,255,255);
-  padding: 3px 6px 3px 6px;
+  padding: 2px 5px 2px 5px;
   font-weight: 700;
   font-size: 13px;
-  margin: 3px;
+  margin: 2px;
+  font-family: "Microsoft YaHei", "微软雅黑";
 }
 .tag_2d{
   background-image: linear-gradient(-90deg, #29bdd9 0%, #276ace 100%);
