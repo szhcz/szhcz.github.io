@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <link rel="icon" href="https://raw.githubusercontent.com/szhcz/myImg/main/花海.png?token=A2GDWN4DQNTRN6BYWIAA7ZLGSNYEI">
   
-  <title>嗨！ | szh&#39;s Blog</title>
+  <title>Addressing Representation Collapse in Vector Quantized Models with One Linear Layer | szh&#39;s Blog</title>
   
   <meta name="author" content="szh" />
   <meta http-equiv="Cache-Control" content="no-transform" />
@@ -15,21 +15,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="" />
+    <meta name="keywords" content="Diffusion Model, 图像生成, 论文阅读" />
   
-  <meta name="description" content="哦说声嗨，知道你一定会来">
+  <meta name="description" content="1 研究背景、动机、主要贡献1.1 存在问题(动机)现有的方法通过降低潜在空间的维度来缓解表示崩溃问题（只有一小部分 codebook 中向量通过梯度下降更新），但会以牺牲模型容量为代价。 1.2 主要贡献提出了 SimVQ 方法，有效解决了表示崩溃问题，并在多种模态（图像和音频）和不同模型架构上验证了有效性。 2 论文提出的新方法  SimVQ 通过引入一个可学习的线性变换矩阵 W 来重新参数化">
 <meta property="og:type" content="article">
-<meta property="og:title" content="嗨！">
-<meta property="og:url" content="https://szhcz.github.io/posts/hello-world/index.html">
+<meta property="og:title" content="Addressing Representation Collapse in Vector Quantized Models with One Linear Layer">
+<meta property="og:url" content="https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/index.html">
 <meta property="og:site_name" content="szh&#39;s Blog">
-<meta property="og:description" content="哦说声嗨，知道你一定会来">
+<meta property="og:description" content="1 研究背景、动机、主要贡献1.1 存在问题(动机)现有的方法通过降低潜在空间的维度来缓解表示崩溃问题（只有一小部分 codebook 中向量通过梯度下降更新），但会以牺牲模型容量为代价。 1.2 主要贡献提出了 SimVQ 方法，有效解决了表示崩溃问题，并在多种模态（图像和音频）和不同模型架构上验证了有效性。 2 论文提出的新方法  SimVQ 通过引入一个可学习的线性变换矩阵 W 来重新参数化">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/szhcz/myImg/main/%E8%8A%B1%E6%B5%B7.png?token=A2GDWN4DQNTRN6BYWIAA7ZLGSNYEI">
-<meta property="article:published_time" content="2024-07-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-07-12T16:00:00.000Z">
+<meta property="og:image" content="https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20241229152923480.png">
+<meta property="article:published_time" content="2024-12-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-12-28T16:00:00.000Z">
 <meta property="article:author" content="szh">
+<meta property="article:tag" content="论文阅读">
+<meta property="article:tag" content="Diffusion Model">
+<meta property="article:tag" content="图像生成">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/szhcz/myImg/main/%E8%8A%B1%E6%B5%B7.png?token=A2GDWN4DQNTRN6BYWIAA7ZLGSNYEI">
+<meta name="twitter:image" content="https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/https:/raw.githubusercontent.com/szhcz/myImg/main/image-20241229152923480.png">
   
   <!-- 站点验证相关 -->
   
@@ -61,7 +64,119 @@
     <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
   
   
-<meta name="generator" content="Hexo 7.3.0"></head>
+<meta name="generator" content="Hexo 7.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
 
 
     <body class="custom-background">
@@ -177,16 +292,16 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-        <link itemprop="mainEntityOfPage" href="https://szhcz.github.io/posts/hello-world/">
+        <link itemprop="mainEntityOfPage" href="https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/">
         <div class="kratos-hentry kratos-post-inner clearfix">
             <header class="kratos-entry-header">
                 
-                    <h1 class="kratos-entry-title text-center" itemprop="name headline">嗨！</h1>
+                    <h1 class="kratos-entry-title text-center" itemprop="name headline">Addressing Representation Collapse in Vector Quantized Models with One Linear Layer</h1>
                     
                         
                                 <ul class="kratos-post-meta text-center">
-                                    <li><time datetime="2024-07-12T16:00:00.000Z" itemprop="datePublished"><i
-                                                class="fa fa-calendar"></i> 2024-07-13</time></li>
+                                    <li><time datetime="2024-12-27T16:00:00.000Z" itemprop="datePublished"><i
+                                                class="fa fa-calendar"></i> 2024-12-28</time></li>
                                     <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                                         <i class="fa fa-user"></i> 作者 <span itemprop="name">szh</span>
                                     </li>
@@ -195,7 +310,7 @@
                                             <i class="fa fa-edit"></i>
                                             
                                                 
-                                                    14
+                                                    1453
                                                         
                                                                             字
                                         </li>
@@ -207,8 +322,59 @@
                 
                         
                             
+                                <div class="kratos-post-inner-toc toc-div-class" >
+                                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E3%80%81%E5%8A%A8%E6%9C%BA%E3%80%81%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%AE%BA%E6%96%87%E4%BC%98%E7%BC%BA%E7%82%B9%E3%80%81%E5%B1%80%E9%99%90%E6%80%A7%E3%80%81%E5%80%9F%E9%89%B4%E6%80%A7"><span class="toc-text">4 论文优缺点、局限性、借鉴性</span></a></li></ol>
+                                </div>
+                                
                                     <hr />
-                                    <div itemprop="articleBody"><p>哦说声嗨，知道你一定会来</p>
+                                    <div itemprop="articleBody"><h1 id="1-研究背景、动机、主要贡献"><a href="#1-研究背景、动机、主要贡献" class="headerlink" title="1 研究背景、动机、主要贡献"></a>1 研究背景、动机、主要贡献</h1><h2 id="1-1-存在问题-动机"><a href="#1-1-存在问题-动机" class="headerlink" title="1.1 存在问题(动机)"></a>1.1 存在问题(动机)</h2><p>现有的方法通过降低潜在空间的维度来缓解表示崩溃问题（只有一小部分 codebook 中向量通过梯度下降更新），但会以牺牲模型容量为代价。</p>
+<h2 id="1-2-主要贡献"><a href="#1-2-主要贡献" class="headerlink" title="1.2 主要贡献"></a>1.2 主要贡献</h2><p>提出了 SimVQ 方法，有效解决了表示崩溃问题，并在多种模态（图像和音频）和不同模型架构上验证了有效性。</p>
+<h1 id="2-论文提出的新方法"><a href="#2-论文提出的新方法" class="headerlink" title="2 论文提出的新方法"></a>2 论文提出的新方法</h1><p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241229152923480.png" alt=""></p>
+<p><img src="C:%5CUsers%5CZephyr%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20241229154136724.png" alt=""></p>
+<p>SimVQ 通过引入一个可学习的线性变换矩阵 W 来重新参数化 codebook，将codebook C 转换为 CW。这种方法使得整个 codebook 可以被优化，而不仅仅是被选择的 embedding。且验证了只有 W 被优化，而 C 保持固定的情况下效果最好，同时也显著降低了内存使用并提高了训练效率。</p>
+<h1 id="3-论文实验评估方法与效果"><a href="#3-论文实验评估方法与效果" class="headerlink" title="3 论文实验评估方法与效果"></a>3 论文实验评估方法与效果</h1><p><img src="https://raw.githubusercontent.com/szhcz/myImg/main/image-20241229153253466.png" alt=""></p>
+<p>效果上挺好的，且其实验设置 embedding_dim 为 128，而其他的 vq 大多为 8、16。codebook size 为 65536，这点上也放大了其他方法的表示崩溃问题。codebook size 能够设置为 65536，其实也得益于其仅需要更新 W，内存消耗仅为 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="5.651ex" height="2.452ex" role="img" focusable="false" viewBox="0 -833.9 2497.6 1083.9"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="msup" transform="translate(1152,0)"><g data-mml-node="mi"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mn" transform="translate(553,363) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g></g><g data-mml-node="mo" transform="translate(2108.6,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container>，与 codebook size 无关，而其他方法大多为 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="6.674ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2950 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path></g><g data-mml-node="mo" transform="translate(763,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mi" transform="translate(1152,0)"><path data-c="1D43E" d="M285 628Q285 635 228 637Q205 637 198 638T191 647Q191 649 193 661Q199 681 203 682Q205 683 214 683H219Q260 681 355 681Q389 681 418 681T463 682T483 682Q500 682 500 674Q500 669 497 660Q496 658 496 654T495 648T493 644T490 641T486 639T479 638T470 637T456 637Q416 636 405 634T387 623L306 305Q307 305 490 449T678 597Q692 611 692 620Q692 635 667 637Q651 637 651 648Q651 650 654 662T659 677Q662 682 676 682Q680 682 711 681T791 680Q814 680 839 681T869 682Q889 682 889 672Q889 650 881 642Q878 637 862 637Q787 632 726 586Q710 576 656 534T556 455L509 418L518 396Q527 374 546 329T581 244Q656 67 661 61Q663 59 666 57Q680 47 717 46H738Q744 38 744 37T741 19Q737 6 731 0H720Q680 3 625 3Q503 3 488 0H478Q472 6 472 9T474 27Q478 40 480 43T491 46H494Q544 46 544 71Q544 75 517 141T485 216L427 354L359 301L291 248L268 155Q245 63 245 58Q245 51 253 49T303 46H334Q340 37 340 35Q340 19 333 5Q328 0 317 0Q314 0 280 1T180 2Q118 2 85 2T49 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Z"></path></g><g data-mml-node="mi" transform="translate(2041,0)"><path data-c="1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></g><g data-mml-node="mo" transform="translate(2561,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g></g></g></svg></mjx-container>。</p>
+<p>虽然这样的实验设置是根据本文方法的优点来设置的，同时也会放大其他方法的缺点，但是各个指标上面的表现，也优于其他方法在适合自身方法的 setting 下的表现。</p>
+<h1 id="4-论文优缺点、局限性、借鉴性"><a href="#4-论文优缺点、局限性、借鉴性" class="headerlink" title="4 论文优缺点、局限性、借鉴性"></a>4 论文优缺点、局限性、借鉴性</h1><p>优点：</p>
+<ul>
+<li>更高的重建表现、更高的 codebook 利用率</li>
+<li>更小的内存消耗</li>
+<li>latent dim 较大时也能有较好的表现</li>
+</ul>
+<p>缺点（审稿人）：</p>
+<ol>
+<li>虽然这在实践中可能效果很好，但我不认为需要就此写一篇全新的论文<ol>
+<li>论文的主要贡献可以总结为，如果将一个 codeword 分配给编码器输出会导致表示崩溃，那么可以使用整个 codebook 的加权组合。虽然这在实践中可能效果很好，但我不认为需要就此写一篇全新的论文。 </li>
+</ol>
+</li>
+<li>相关工作的引用<ol>
+<li>请添加2024年ICML的“隐式神经码本的残差量化”以及其他关于VQ的最新论文的引用。</li>
+<li>文献回顾有限：论文缺乏全面的相关工作回顾，省略了几个相关的解决codebook 崩溃的方法，如SQ-VAE [1]、VQ-WAE [2]、HVQ-VAE [3]和CVQ-VAE [4]</li>
+<li>没有探索和经典的字典学习、稀疏编码和向量量化的联系</li>
+<li>没有提到 SC-VAE</li>
+</ol>
+</li>
+<li>实验<ol>
+<li>缺少生成方面的实验<ol>
+<li>无法将潜在表示离散化。基于相关系数训练 transformer？</li>
+</ol>
+</li>
+<li>缺少 baseline：重要的 baseline 方法如SQ-VAE [1]、VQ-WAE [2]、HVQ-VAE [3]和CVQ-VAE [4]没有包含在实验比较中。</li>
+<li>缺少和 SC-VAE 的比较</li>
+</ol>
+</li>
+<li>实验分析方面<ol>
+<li>“Remark 4.1. The simultaneous optimization of the latent basis w and the coefficient matrix q may lead to the collapse.”. Why is this the case?</li>
+</ol>
+</li>
+<li>其他<ol>
+<li>如果包含玩具示例部分，需要详细阐述，以便读者可以手工计算示例。</li>
+<li>关于 codebook 崩溃原因的见解并不新颖</li>
+</ol>
+</li>
+</ol>
+<hr>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2411.02038">Addressing Representation Collapse in Vector Quantized Models with One Linear Layer</a></p>
 </div>
             </div>
             
@@ -262,7 +428,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "https://szhcz.github.io/posts/hello-world/",
+                text: "https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -274,10 +440,10 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "https://szhcz.github.io/posts/hello-world/";
-            const title         = "「嗨！」";
-            const excerpt       = `哦说声嗨，知道你一定会来
-`;
+            const hostUrl       = "https://szhcz.github.io/posts/Addressing-Representation-Collapse-in-Vector-Quantized-Models-with-One-Linear-Layer/";
+            const title         = "「Addressing Representation Collapse in Vector Quantized Models with One Linear Layer」";
+            const excerpt       = `1 研究背景、动机、主要贡献1.1 存在问题(动机)现有的方法通过降低潜在空间的维度来缓解表示崩溃问题（只有一小部分 codebook 中向量通过梯度下降更新），但会以牺牲模型容量为代价。
+1.2 主要贡献提出了 SimVQ 方法，有...`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -296,10 +462,10 @@
                                 <div class="footer-tag clearfix">
                                     <div class="pull-left">
                                         <i class="fa fa-tags"></i>
-                                        
+                                        <a class="tag-none-link" href="/tags/Diffusion-Model/" rel="tag">Diffusion Model</a>, <a class="tag-none-link" href="/tags/%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90/" rel="tag">图像生成</a>, <a class="tag-none-link" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" rel="tag">论文阅读</a>
                                     </div>
                                     <div class="pull-date">
-                                        <time datetime="2024-07-12T16:00:00.000Z" itemprop="dateModified">最后编辑：2024-07-13</time>
+                                        <time datetime="2024-12-28T16:00:00.000Z" itemprop="dateModified">最后编辑：2024-12-29</time>
                                     </div>
                                 </div>
                     </footer>
@@ -307,12 +473,12 @@
         
             <nav class="navigation post-navigation clearfix" role="navigation">
                 
+                    <div class="nav-previous clearfix">
+                        <a title=" T2I-CompBench++: An Enhanced and Comprehensive Benchmark for Compositional Text-to-image Generation"
+                            href="/posts/T2I-CompBench++-An-Enhanced-and-Comprehensive-Benchmark-for-Compositional-Text-to-image-Generation/">&lt; 上一篇</a>
+                    </div>
+                    
                         
-                            <div class="nav-next clearfix">
-                                <a title=" 通过自我反思减轻大语言模型中的幻觉"
-                                    href="/posts/Towards-Mitigating-LLM-Hallucination-via-Self-Reflection/">下一篇 &gt;</a>
-                            </div>
-                            
             </nav>
             
                 
@@ -371,6 +537,18 @@
                                                 
                                     <div class="sticky-area">
                                         
+                            <aside id="krw-toc" class="widget widget-kratos-toc clearfix toc-div-class" >
+    <div class="photo-background"></div>
+    <h4 class="widget-title no-after">
+        <i class="fa fa-compass"></i>
+        文章目录
+        <span class="toc-progress-bar" role="progressbar" aria-label="阅读进度："></span>
+    </h4>
+    <div class="textwidget">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF%E3%80%81%E5%8A%A8%E6%9C%BA%E3%80%81%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1 研究背景、动机、主要贡献</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%9C%BA"><span class="toc-text">1.1 存在问题(动机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E4%B8%BB%E8%A6%81%E8%B4%A1%E7%8C%AE"><span class="toc-text">1.2 主要贡献</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E8%AE%BA%E6%96%87%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B0%E6%96%B9%E6%B3%95"><span class="toc-text">2 论文提出的新方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%AE%BA%E6%96%87%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E4%B8%8E%E6%95%88%E6%9E%9C"><span class="toc-text">3 论文实验评估方法与效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%AE%BA%E6%96%87%E4%BC%98%E7%BC%BA%E7%82%B9%E3%80%81%E5%B1%80%E9%99%90%E6%80%A7%E3%80%81%E5%80%9F%E9%89%B4%E6%80%A7"><span class="toc-text">4 论文优缺点、局限性、借鉴性</span></a></li></ol>
+    </div>
+</aside>
+                                
                                             
   <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
     <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
